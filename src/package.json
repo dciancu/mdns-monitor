@@ -1,0 +1,10 @@
+{
+  "name": "mdns-monitor",
+  "packageManager": "yarn@4.3.0",
+  "dependencies": {
+    "express": "^4.19.2",
+    "node-dns-sd": "^1.0.1",
+    "pretty-print-json": "^3.0.1",
+    "socket.io": "^4.7.5"
+  }
+}

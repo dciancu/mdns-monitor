@@ -1,0 +1,79 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="google" content="notranslate">
+    <meta http-equiv="Content-Language" content="en">
+    <title>mDNS Monitor</title>
+    <link rel="stylesheet" href="/bulma.min.css">
+    <link rel="stylesheet" href="/pretty-print-json.css">
+</head>
+<body>
+<table class="table is-fullwidth">
+    <tbody id="tbody"></tbody>
+</table>
+<div class="columns is-centered">
+    <div class="column is-one-fifth">
+        <progress class="progress is-small is-primary" max="100">10%</progress>
+    </div>
+</div>
+<div style="position:fixed;bottom:0;right:0;background:dimgrey;">
+    <button id="clear" class="button is-danger is-small" type="button">Clear</button>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <label class="checkbox">
+        <input id="auto_scroll" type="checkbox" checked>
+        Auto scroll
+    </label>
+    &nbsp;&nbsp;
+    <label class="checkbox">
+        <input id="auto_clear" type="checkbox" checked>
+        Auto clear every hour
+    </label>
+    &nbsp;
+</div>
+<script src="/socket.io.js"></script>
+<script src="/pretty-print-json.js"></script>
+<script>
+    const socket = io();
+    document.addEventListener('DOMContentLoaded', () => {
+        const tbody = document.getElementById('tbody');
+
+        document.getElementById('clear').onclick = () => tbody.innerHTML = '';
+
+        let autoClearInterval;
+        const autoClear = document.getElementById('auto_clear');
+        const autoClearFn = autoClear.onchange = () => {
+            if (autoClearInterval) {
+                clearInterval(autoClearInterval);
+                autoClearInterval = null;
+            }
+            if (autoClear.checked) {
+                autoClearInterval = setInterval(() => {
+                    if (autoClear.checked) {
+                        tbody.innerHTML = '';
+                    }
+                }, 3600000);
+            }
+        };
+        autoClearFn();
+
+        const jsonOptions = {trailingCommas: false};
+        const autoScroll = document.getElementById('auto_scroll');
+        socket.on('packet', (msg) => {
+            // console.log(prettyPrintJson.toHtml(msg, jsonOptions));
+            tbody.insertAdjacentHTML('beforeend',
+                `<tr><td>${msg.address}<br>
+                    H: ${prettyPrintJson.toHtml(msg.header, jsonOptions)}<br>
+                    Q: ${prettyPrintJson.toHtml(msg.questions, jsonOptions)}<br>
+                    A: ${prettyPrintJson.toHtml(msg.answers, jsonOptions)}<br>
+                    AU: ${prettyPrintJson.toHtml(msg.authorities, jsonOptions)}<br>
+                    AD: ${prettyPrintJson.toHtml(msg.additionals, jsonOptions)}
+                </td></tr>`
+            );
+            if (autoScroll.checked) {
+                window.scrollTo(0, document.body.scrollHeight);
+            }
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+services:
+  mdns-monitor:
+    container_name: mdns-monitor
+    image: dciancu/mdns-monitor
+    init: true
+    read_only: true
+    restart: unless-stopped
+    environment:
+      TZ: 'UTC'
+#    ports:
+#      - "5353:5353/udp" # mDNS
+#      - "80:80/tcp" # http web server
