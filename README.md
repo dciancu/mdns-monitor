@@ -17,10 +17,11 @@ Create a new `docker-compose.override.yml` file and adjust below content for you
 services:
   mdns-monitor:
     environment:
-      - TZ=UTC
-    ports:
-      - "5353:5353/udp" # mDNS
-      - "3000:3000/tcp" # http web server
+      TZ: 'UTC'
+      WEB_ADDRESS: '0.0.0.0'
+      WEB_PORT: 3000
 ```
+`WEB_ADDRESS` sets the web interface listen address.  
+`WEB_PORT` sets the web interface listen port.  
 `TZ` sets the timezone inside the container.  
 Valid timezones inside the container are at `/usr/share/zoneinfo`.

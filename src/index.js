@@ -46,6 +46,7 @@ io.on('connection', (socket) => {
     });
 });
 
-server.listen(80, '0.0.0.0', () => {
-    console.log('Web server started.');
+server.listen(process.env.WEB_PORT, process.env.WEB_ADDRESS, () => {
+    const port = process.env.WEB_PORT == '80' ? '' : ':' + process.env.WEB_PORT;
+    console.log('Web server started at http://' + process.env.WEB_ADDRESS + port);
 });

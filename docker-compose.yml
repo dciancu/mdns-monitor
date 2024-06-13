@@ -5,8 +5,8 @@ services:
     init: true
     read_only: true
     restart: unless-stopped
+    network_mode: host
     environment:
       TZ: 'UTC'
-#    ports:
-#      - "5353:5353/udp" # mDNS
-#      - "80:80/tcp" # http web server
+      WEB_ADDRESS: '0.0.0.0'
+      WEB_PORT: 3000
