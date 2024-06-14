@@ -1,14 +1,16 @@
 version: 2.1
 jobs:
   build-arm:
-    machine:
-      image: ubuntu-2404:current
-      docker_layer_caching: true
+    docker:
+      - image: cimg/base:current
     resource_class: arm.medium
+    working_directory: /mnt/ramdisk
     environment:
       BUILDKIT_PROGRESS: plain
     steps:
       - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
       - restore_cache:
           key: node_modules-{{ checksum "src/yarn.lock" }}
       - run:
@@ -19,14 +21,16 @@ jobs:
           paths:
             - src/node_modules
   build-x86:
-    machine:
-      image: ubuntu-2404:current
-      docker_layer_caching: true
+    docker:
+      - image: cimg/base:current
     resource_class: medium
+    working_directory: /mnt/ramdisk
     environment:
       BUILDKIT_PROGRESS: plain
     steps:
       - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
       - restore_cache:
           key: node_modules-{{ checksum "src/yarn.lock" }}
       - run:
@@ -37,12 +41,14 @@ jobs:
           paths:
             - src/node_modules
   publish:
-    machine:
-      image: ubuntu-2404:current
-      docker_layer_caching: true
+    docker:
+      - image: cimg/base:current
     resource_class: medium
+    working_directory: /mnt/ramdisk
     steps:
       - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
       - run:
           name: Publish
           command: docker images
