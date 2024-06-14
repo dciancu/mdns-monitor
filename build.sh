@@ -21,5 +21,6 @@ fi
 docker build -t "$image_tag" --pull .
 
 if [[ -n "${CIRCLE_BRANCH+x}" ]]; then
+    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USERNAME" --password-stdin
     docker push "$image_tag"
 fi
