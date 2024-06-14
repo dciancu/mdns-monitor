@@ -43,8 +43,9 @@ jobs:
     resource_class: medium
     steps:
       - checkout
-#      - run:
-#          name: Publish
+      - run:
+          name: Publish
+          command: docker images
 #          command: ./publish.sh
       - run:
           name: Prune Docker Images
