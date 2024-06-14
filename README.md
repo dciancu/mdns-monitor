@@ -8,7 +8,11 @@ Simple mDNS application to monitor traffic and show it in a web page.
 
 Docker Hub Image: [dciancu/mdns-monitor](https://hub.docker.com/r/dciancu/mdns-monitor)  
 
-Run the container using `docker compose` with the provided `docker-compose.yml`.  
+Run the container using `docker compose` with the provided `docker-compose.yml`.
+Access the web interface at the configured `WEB_ADDRESS` and `WEB_PORT`.
+
+#### API JSON Services
+A list of discovered services and their addresses can be retrieved as JSON at endpoint `/services`.
 
 ### Config
 
@@ -25,3 +29,7 @@ services:
 `WEB_PORT` sets the web interface listen port.  
 `TZ` sets the timezone inside the container.  
 Valid timezones inside the container are at `/usr/share/zoneinfo`.
+
+## License
+
+This project is open-source software licensed under the [Apache License, Version 2.0](https://opensource.org/license/apache-2-0).

@@ -8,14 +8,31 @@
     <link rel="stylesheet" href="/pretty-print-json.css">
 </head>
 <body>
-<table class="table is-fullwidth">
-    <tbody id="tbody"></tbody>
+<table class="table is-fullwidth is-striped is-hoverable">
+    <tbody id="tbody_packets"></tbody>
+    <tbody id="tbody_services" class="is-hidden"></tbody>
 </table>
-<div class="columns is-centered">
+<div class="columns is-centered" style="margin-bottom:0">
     <div class="column is-one-fifth">
-        <progress class="progress is-small is-primary" max="100">10%</progress>
+        <progress class="progress is-small is-primary" max="100" style="height:.4rem">10%</progress>
     </div>
 </div>
+
+<div style="position:fixed;bottom:0;left:0;background:dimgrey;">
+    <div class="control">
+        &nbsp;
+        <label class="radio">
+            <input id="packets_show" type="radio" name="show" checked>
+            Packets
+        </label>
+        <label class="radio">
+            <input id="services_show" type="radio" name="show">
+            Services
+        </label>
+        &nbsp;
+    </div>
+</div>
+
 <div style="position:fixed;bottom:0;right:0;background:dimgrey;">
     <button id="clear" class="button is-danger is-small" type="button">Clear</button>
     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -30,14 +47,38 @@
     </label>
     &nbsp;
 </div>
+
 <script src="/socket.io.js"></script>
 <script src="/pretty-print-json.js"></script>
 <script>
     const socket = io();
     document.addEventListener('DOMContentLoaded', () => {
-        const tbody = document.getElementById('tbody');
+        const tbodyPackets = document.getElementById('tbody_packets');
+        const tbodyServices = document.getElementById('tbody_services');
 
-        document.getElementById('clear').onclick = () => tbody.innerHTML = '';
+        const packetsShow = document.getElementById('packets_show');
+        const packetsShowFn = packetsShow.onchange = () => {
+            if (packetsShow.checked) {
+                tbodyServices.classList.add('is-hidden');
+                tbodyPackets.classList.remove('is-hidden');
+            }
+        };
+        packetsShowFn();
+
+        const servicesShow = document.getElementById('services_show');
+        const servicesShowFn = servicesShow.onchange = () => {
+            if (servicesShow.checked) {
+                tbodyPackets.classList.add('is-hidden');
+                tbodyServices.classList.remove('is-hidden');
+            }
+        };
+        servicesShowFn();
+
+        const clear = document.getElementById('clear').onclick = () => {
+            tbodyPackets.innerHTML = '';
+            tbodyServices.innerHTML = '';
+            socket.emit('services'); // request services
+        }
 
         let autoClearInterval;
         const autoClear = document.getElementById('auto_clear');
@@ -49,30 +90,76 @@
             if (autoClear.checked) {
                 autoClearInterval = setInterval(() => {
                     if (autoClear.checked) {
-                        tbody.innerHTML = '';
+                        clear();
                     }
-                }, 3600000);
+                }, 3600000); // every hour
             }
         };
         autoClearFn();
 
         const jsonOptions = {trailingCommas: false};
         const autoScroll = document.getElementById('auto_scroll');
-        socket.on('packet', (msg) => {
-            // console.log(prettyPrintJson.toHtml(msg, jsonOptions));
-            tbody.insertAdjacentHTML('beforeend',
-                `<tr><td>${msg.address}<br>
-                    H: ${prettyPrintJson.toHtml(msg.header, jsonOptions)}<br>
-                    Q: ${prettyPrintJson.toHtml(msg.questions, jsonOptions)}<br>
-                    A: ${prettyPrintJson.toHtml(msg.answers, jsonOptions)}<br>
-                    AU: ${prettyPrintJson.toHtml(msg.authorities, jsonOptions)}<br>
-                    AD: ${prettyPrintJson.toHtml(msg.additionals, jsonOptions)}
+
+        socket.on('packet', (packet, rinfo) => {
+            // console.log(prettyPrintJson.toHtml(packet, jsonOptions), prettyPrintJson.toHtml(rinfo, jsonOptions));
+
+            const port = rinfo.port == '5353' ? '' : ':' + rinfo.port;
+            const Q = packet.questions.length ? `Q: ${prettyPrintJson.toHtml(packet.questions, jsonOptions)}<br>` : '';
+            const A = packet.answers.length ? `A: ${prettyPrintJson.toHtml(packet.answers, jsonOptions)}<br>` : '';
+            const AU = packet.authorities.length ? `AU: ${prettyPrintJson.toHtml(packet.authorities, jsonOptions)}<br>` : '';
+            const AD = packet.additionals.length ? `AD: ${prettyPrintJson.toHtml(packet.additionals, jsonOptions)}<br>` : '';
+            tbodyPackets.insertAdjacentHTML('beforeend',
+                `<tr><td>
+                    <span class="has-text-primary">
+                        ${rinfo.family} ${rinfo.address}${port} (size: ${rinfo.size})
+                    </span><br>
+                    H: ${prettyPrintJson.toHtml(packet.header, jsonOptions)}<br>
+                    ${Q}
+                    ${A}
+                    ${AU}
+                    ${AD}
                 </td></tr>`
             );
-            if (autoScroll.checked) {
+
+            if (packetsShow.checked && autoScroll.checked) {
                 window.scrollTo(0, document.body.scrollHeight);
             }
         });
+
+        socket.on('services', services => {
+            window.mdnsServices = services;
+            let html = '';
+            for (const name in services) {
+                const service = services[name];
+                let type = service.service ? '<span class="has-text-info">Type</span> ' + service.service.type + '<br>' : '';
+                let host = service.host ? '<span class="has-text-info">Host</span> ' + service.host + '<br>' : '';
+                let port = service.port ? '<span class="has-text-info">Port</span> ' + service.port + '<br>' : '';
+                let serviceName = service.name ? '<span class="has-text-info">Name</span> ' + service.name + '<br>' : '';
+                let addresses = '';
+                if (service.addresses) {
+                    for (let key in service.addresses) {
+                        let address = service.addresses[key];
+                        addresses += `<span class="has-text-info">${address.family}</span> ${address.address}<br>`
+                    }
+                } else {
+                    addresses = 'No addressses';
+                }
+                html += `<tr><td>
+                    <span class="has-text-primary">${name}</span><br>
+                    ${type}
+                    ${host}
+                    ${serviceName}
+                    ${port}
+                    ${addresses}
+                </td></tr>`;
+            }
+            tbodyServices.innerHTML = html;
+
+            if (servicesShow.checked && autoScroll.checked) {
+                window.scrollTo(0, document.body.scrollHeight);
+            }
+        });
+        socket.emit('services'); // request services
     });
 </script>
 </body>

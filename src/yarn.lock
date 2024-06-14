@@ -5,6 +5,13 @@ __metadata:
   version: 8
   cacheKey: 10c0
 
+"@leichtgewicht/ip-codec@npm:^2.0.1":
+  version: 2.0.5
+  resolution: "@leichtgewicht/ip-codec@npm:2.0.5"
+  checksum: 10c0/14a0112bd59615eef9e3446fea018045720cd3da85a98f801a685a818b0d96ef2a1f7227e8d271def546b2e2a0fe91ef915ba9dc912ab7967d2317b1a051d66b
+  languageName: node
+  linkType: hard
+
 "@socket.io/component-emitter@npm:~3.1.0":
   version: 3.1.2
   resolution: "@socket.io/component-emitter@npm:3.1.2"
@@ -191,6 +198,15 @@ __metadata:
   version: 1.2.0
   resolution: "destroy@npm:1.2.0"
   checksum: 10c0/bd7633942f57418f5a3b80d5cb53898127bcf53e24cdf5d5f4396be471417671f0fee48a4ebe9a1e9defbde2a31280011af58a57e090ff822f589b443ed4e643
+  languageName: node
+  linkType: hard
+
+"dns-packet@npm:^5.6.0":
+  version: 5.6.1
+  resolution: "dns-packet@npm:5.6.1"
+  dependencies:
+    "@leichtgewicht/ip-codec": "npm:^2.0.1"
+  checksum: 10c0/8948d3d03063fb68e04a1e386875f8c3bcc398fc375f535f2b438fad8f41bf1afa6f5e70893ba44f4ae884c089247e0a31045722fa6ff0f01d228da103f1811d
   languageName: node
   linkType: hard
 
@@ -421,6 +437,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ip@npm:^2.0.1":
+  version: 2.0.1
+  resolution: "ip@npm:2.0.1"
+  checksum: 10c0/cab8eb3e88d0abe23e4724829621ec4c4c5cb41a7f936a2e626c947128c1be16ed543448d42af7cca95379f9892bfcacc1ccd8d09bc7e8bea0e86d492ce33616
+  languageName: node
+  linkType: hard
+
 "ipaddr.js@npm:1.9.1":
   version: 1.9.1
   resolution: "ipaddr.js@npm:1.9.1"
@@ -433,11 +456,21 @@ __metadata:
   resolution: "mdns-monitor@workspace:."
   dependencies:
     express: "npm:^4.19.2"
-    node-dns-sd: "npm:^1.0.1"
+    mdns-scanner: "npm:^1.2.2"
     pretty-print-json: "npm:^3.0.1"
     socket.io: "npm:^4.7.5"
   languageName: unknown
   linkType: soft
+
+"mdns-scanner@npm:^1.2.2":
+  version: 1.2.2
+  resolution: "mdns-scanner@npm:1.2.2"
+  dependencies:
+    dns-packet: "npm:^5.6.0"
+    ip: "npm:^2.0.1"
+  checksum: 10c0/b9315825049463d61906d59244586da41c01138ff7480aa3a471c9cd3f4d38c562242de26d765982d6a30ab2e33a56dd653f69e6780f4e5d02bffe9f48b7abec
+  languageName: node
+  linkType: hard
 
 "media-typer@npm:0.3.0":
   version: 0.3.0
@@ -510,13 +543,6 @@ __metadata:
   version: 0.6.3
   resolution: "negotiator@npm:0.6.3"
   checksum: 10c0/3ec9fd413e7bf071c937ae60d572bc67155262068ed522cf4b3be5edbe6ddf67d095ec03a3a14ebf8fc8e95f8e1d61be4869db0dbb0de696f6b837358bd43fc2
-  languageName: node
-  linkType: hard
-
-"node-dns-sd@npm:^1.0.1":
-  version: 1.0.1
-  resolution: "node-dns-sd@npm:1.0.1"
-  checksum: 10c0/dc818d707371c1ac0fc2f8ed52064671ebc8547bc5b2b5c4e90f4ffb89a3c38b8439aa38792c9bbb3af5b721613a7c6e5244fc3a83784b3446c42e9d7009ad93
   languageName: node
   linkType: hard
 
