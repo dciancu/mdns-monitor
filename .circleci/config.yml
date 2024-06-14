@@ -6,6 +6,7 @@ jobs:
     resource_class: arm.medium
     working_directory: /mnt/ramdisk
     environment:
+      BUILD_ARCH: arm
       BUILDKIT_PROGRESS: plain
     steps:
       - checkout
@@ -14,18 +15,22 @@ jobs:
       - restore_cache:
           key: node_modules-{{ checksum "src/yarn.lock" }}
       - run:
-          name: Build
+          name: Build and push arm
           command: ./build.sh
       - save_cache:
           key: node_modules-{{ checksum "src/yarn.lock" }}
           paths:
             - src/node_modules
+      - run:
+          name: Prune Docker Images
+          command: docker image prune -f
   build-x86:
     docker:
       - image: cimg/base:current
     resource_class: medium
     working_directory: /mnt/ramdisk
     environment:
+      BUILD_ARCH: x86
       BUILDKIT_PROGRESS: plain
     steps:
       - checkout
@@ -34,12 +39,15 @@ jobs:
       - restore_cache:
           key: node_modules-{{ checksum "src/yarn.lock" }}
       - run:
-          name: Build
+          name: Build and push x86
           command: ./build.sh
       - save_cache:
           key: node_modules-{{ checksum "src/yarn.lock" }}
           paths:
             - src/node_modules
+      - run:
+          name: Prune Docker Images
+          command: docker image prune -f
   publish:
     docker:
       - image: cimg/base:current
@@ -47,8 +55,7 @@ jobs:
     working_directory: /mnt/ramdisk
     steps:
       - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
+      - setup_remote_docker
       - run:
           name: Publish
           command: docker images
