@@ -8,9 +8,7 @@ cd "$SCRIPT_DIR"
 image_name="${DOCKER_IMAGE:-dciancu/mdns-monitor}"
 
 function pushManifest() {
-    docker manifest create "$1" \
-        --ammend "${1}-arm" \
-        --ammend "${1}-x86"
+    docker manifest create "$1" "${1}-arm" "${1}-x86"
     docker manifest push "$1"
 }
 
