@@ -5,7 +5,6 @@ jobs:
       image: ubuntu-2404:current
       docker_layer_caching: true
     resource_class: arm.medium
-    working_directory: /mnt/ramdisk
     environment:
       BUILDKIT_PROGRESS: plain
     steps:
@@ -24,7 +23,6 @@ jobs:
       image: ubuntu-2404:current
       docker_layer_caching: true
     resource_class: medium
-    working_directory: /mnt/ramdisk
     environment:
       BUILDKIT_PROGRESS: plain
     steps:
@@ -43,7 +41,6 @@ jobs:
       image: ubuntu-2404:current
       docker_layer_caching: true
     resource_class: medium
-    working_directory: /mnt/ramdisk
     steps:
       - checkout
 #      - run:
