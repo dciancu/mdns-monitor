@@ -53,3 +53,10 @@ jobs:
           name: Prune Docker Images
           command: docker image prune -f
 
+workflows:
+  build-arm:
+    jobs:
+      - build-arm
+  build-x86:
+    jobs:
+      - build-x86
