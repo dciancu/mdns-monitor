@@ -8,7 +8,7 @@ Simple mDNS application to monitor traffic and show it in a web page.
 
 Docker Hub Image: [dciancu/mdns-monitor](https://hub.docker.com/r/dciancu/mdns-monitor)  
 
-Run the container using `docker compose` with the provided `docker-compose.yml`.
+Run the container using `docker compose` with the provided `docker-compose.yml`.  
 Access the web interface at the configured `WEB_ADDRESS` and `WEB_PORT`.
 
 #### API JSON Services
