@@ -1,6 +1,6 @@
 version: 2.1
 jobs:
-  build:
+  build-arm:
     docker:
       - image: cimg/base:current
     resource_class: arm.medium
@@ -26,3 +26,30 @@ jobs:
       - run:
           name: Prune Docker Images
           command: docker image prune -f
+  build-x86:
+    docker:
+      - image: cimg/base:current
+    resource_class: medium
+    working_directory: /mnt/ramdisk
+    environment:
+      BUILDKIT_PROGRESS: plain
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - restore_cache:
+          key: node_modules
+      - run:
+          name: Build
+          command: ./build.sh
+      - save_cache:
+          key: node_modules
+          paths:
+            - src/node_modules
+      - run:
+          name: Publish
+          command: ./publish.sh
+      - run:
+          name: Prune Docker Images
+          command: docker image prune -f
+
