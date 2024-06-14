@@ -5,16 +5,50 @@ const { Scanner, Services } = require('mdns-scanner');
 const scanner = new Scanner({loopback: false});
 const services = new Services(scanner);
 
-scanner.on('packet', (packet, rinfo) => {
-    // console.log(JSON.stringify(packet, null, '  '));
+scanner.on('error', error => {
+    console.log('ERROR EVENT', error.message);
+});
+scanner.on('warn', message => {
+    console.log('WARN EVENT', message)
+});
+scanner.on('debug', message => {
+    console.log('DEBUG EVENT', message);
+});
+scanner.on('packet', (rawPacket, rinfo) => {
+    // console.log(JSON.stringify(rawPacket, null, '  '));
     // console.log(JSON.stringify(rinfo, null, '  '));
+
+    rawPacket = structuredClone(rawPacket);
+    const packet = {
+        questions: rawPacket.questions,
+        answers: rawPacket.answers,
+        authorities: rawPacket.authorities,
+        additionals: rawPacket.additionals,
+    };
+    rawPacket.questions = rawPacket.questions.length;
+    rawPacket.answers = rawPacket.answers.length;
+    rawPacket.authorities = rawPacket.authorities.length;
+    rawPacket.additionals = rawPacket.additionals.length;
+    packet.header = rawPacket;
+
     sockets.forEach(socket => socket.emit('packet', packet, rinfo));
+});
+
+services.on('error', error => {
+    console.log('ERROR EVENT', error.message);
+});
+services.on('warn', message => {
+    console.log('WARN EVENT', message)
+});
+services.on('debug', message => {
+    console.log('DEBUG EVENT', message);
 });
 services.on('discovered', service => {
     // console.log(service);
     // console.log(services.namedServices);
     sockets.forEach(socket => socket.emit('services', services.namedServices));
 });
+
 scanner.init().then(ready => {
     if (! ready) {
         throw new Error('Scanner not ready after init.');
@@ -29,6 +63,7 @@ const express = require('express');
 const {createServer} = require('node:http');
 const {join} = require('node:path');
 const {Server} = require('socket.io');
+const {raw} = require("express");
 
 const app = express();
 const server = createServer(app);
