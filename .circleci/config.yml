@@ -58,8 +58,7 @@ jobs:
       - setup_remote_docker
       - run:
           name: Publish
-          command: docker images
-#          command: ./publish.sh
+          command: ./publish.sh
       - run:
           name: Prune Docker Images
           command: docker image prune -f
