@@ -1,8 +1,8 @@
-# mDNS Monitor
+# mDNS / DNS-SD Monitor
 
 [![CircleCI](https://dl.circleci.com/status-badge/img/circleci/F8zvFL89rXf6pgQo3twuVc/WGzv2M9waPK1akzhtDJQ6E/tree/main.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/circleci/F8zvFL89rXf6pgQo3twuVc/WGzv2M9waPK1akzhtDJQ6E/tree/main)
 
-Simple mDNS application to monitor traffic and show it in a web page.
+Simple mDNS / DNS-SD application to monitor traffic and show it in a web page.
 
 ## Usage
 
