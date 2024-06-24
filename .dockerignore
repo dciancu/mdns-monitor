@@ -1,1 +1,8 @@
+**
+!/src
+**/.yarn
+**/.git
+**/.gitignore
+**/.gitattributes
+**/.editorconfig
 **/node_modules
