@@ -51,7 +51,7 @@ jobs:
   publish:
     docker:
       - image: cimg/base:current
-    resource_class: medium
+    resource_class: small
     working_directory: /mnt/ramdisk
     steps:
       - checkout
