@@ -9,7 +9,6 @@ services:
       TZ: 'UTC'
       WEB_ADDRESS: '0.0.0.0'
       WEB_PORT: 3000
-    network_mode: host # does not work on macOS, use ports config below
 #    ports:
 #      - "5353:5353/udp" # Caution: macOS mDNS is already bound
 #      - "3000:3000/tcp" # WEB_PORT above
