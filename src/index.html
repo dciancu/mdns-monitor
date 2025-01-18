@@ -51,6 +51,11 @@
 <script src="/socket.io.js"></script>
 <script src="/pretty-print-json.js"></script>
 <script>
+    const stripHtml = html => {
+        let doc = new DOMParser().parseFromString(html, 'text/html');
+        return doc.body.textContent || '';
+    };
+
     const socket = io();
     document.addEventListener('DOMContentLoaded', () => {
         const tbodyPackets = document.getElementById('tbody_packets');
@@ -103,7 +108,7 @@
         socket.on('packet', (packet, rinfo) => {
             // console.log(prettyPrintJson.toHtml(packet, jsonOptions), prettyPrintJson.toHtml(rinfo, jsonOptions));
 
-            const port = rinfo.port == '5353' ? '' : ':' + rinfo.port;
+            const port = rinfo.port == '5353' ? '' : ':' + stripHtml(rinfo.port);
             const Q = packet.questions.length ? `Q: ${prettyPrintJson.toHtml(packet.questions, jsonOptions)}<br>` : '';
             const A = packet.answers.length ? `A: ${prettyPrintJson.toHtml(packet.answers, jsonOptions)}<br>` : '';
             const AU = packet.authorities.length ? `AU: ${prettyPrintJson.toHtml(packet.authorities, jsonOptions)}<br>` : '';
@@ -111,7 +116,7 @@
             tbodyPackets.insertAdjacentHTML('beforeend',
                 `<tr><td>
                     <span class="has-text-primary">
-                        ${rinfo.family} ${rinfo.address}${port} (size: ${rinfo.size})
+                        ${stripHtml(rinfo.family)} ${stripHtml(rinfo.address)}${port} (size: ${stripHtml(rinfo.size)})
                     </span><br>
                     H: ${prettyPrintJson.toHtml(packet.header, jsonOptions)}<br>
                     ${Q}
@@ -129,17 +134,18 @@
         socket.on('services', services => {
             window.mdnsServices = services;
             let html = '';
-            for (const name in services) {
+            for (let name in services) {
+                name = stripHtml(name);
                 const service = services[name];
-                let type = service.service ? '<span class="has-text-info">Type</span> ' + service.service.type + '<br>' : '';
-                let host = service.host ? '<span class="has-text-info">Host</span> ' + service.host + '<br>' : '';
-                let port = service.port ? '<span class="has-text-info">Port</span> ' + service.port + '<br>' : '';
-                let serviceName = service.name ? '<span class="has-text-info">Name</span> ' + service.name + '<br>' : '';
+                let type = service.service ? '<span class="has-text-info">Type</span> ' + stripHtml(service.service.type) + '<br>' : '';
+                let host = service.host ? '<span class="has-text-info">Host</span> ' + stripHtml(service.host) + '<br>' : '';
+                let port = service.port ? '<span class="has-text-info">Port</span> ' + stripHtml(service.port) + '<br>' : '';
+                let serviceName = service.name ? '<span class="has-text-info">Name</span> ' + stripHtml(service.name) + '<br>' : '';
                 let addresses = '';
                 if (service.addresses) {
                     for (let key in service.addresses) {
                         let address = service.addresses[key];
-                        addresses += `<span class="has-text-info">${address.family}</span> ${address.address}<br>`
+                        addresses += `<span class="has-text-info">${stripHtml(address.family)}</span> ${stripHtml(address.address)}<br>`
                     }
                 } else {
                     addresses = 'No addressses';
